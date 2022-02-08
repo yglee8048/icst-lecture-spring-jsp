@@ -29,4 +29,16 @@ public class MemberEntity {
     public Integer getPoint() {
         return point;
     }
+
+    public void addPoint(int point) {
+        this.point += point;
+    }
+
+    public void setMemberPw(String memberPw) {
+        this.memberPw = memberPw;
+    }
+
+    public void setMemberName(String memberName) {
+        this.memberName = memberName;
+    }
 }

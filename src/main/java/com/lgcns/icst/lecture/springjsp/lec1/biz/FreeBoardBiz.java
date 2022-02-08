@@ -6,12 +6,26 @@ import com.lgcns.icst.lecture.springjsp.lec1.dto.FreeBoardDTO;
 import com.lgcns.icst.lecture.springjsp.lec1.entity.FreeBoardEntity;
 import com.lgcns.icst.lecture.springjsp.lec1.entity.MemberEntity;
 import com.lgcns.icst.lecture.springjsp.lec1.util.JdbcUtil;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.List;
 
+@Service
 public class FreeBoardBiz {
+
+    private final MemberDAO memberDAO;
+    private final FreeBoardDAO freeBoardDAO;
+    private final PointPolicy pointPolicy;
+
+    @Autowired
+    public FreeBoardBiz(MemberDAO memberDAO, FreeBoardDAO freeBoardDAO, PointPolicy pointPolicy) {
+        this.memberDAO = memberDAO;
+        this.freeBoardDAO = freeBoardDAO;
+        this.pointPolicy = pointPolicy;
+    }
 
     public List<FreeBoardDTO> findAll() throws Exception {
         List<FreeBoardDTO> list = new ArrayList<>();
@@ -21,7 +35,6 @@ public class FreeBoardBiz {
             connection = JdbcUtil.getConnection();
             List<FreeBoardEntity> freeBoardEntities = freeBoardDAO.findAllFreeBoards(connection);
             for (FreeBoardEntity freeBoardEntity : freeBoardEntities) {
-                MemberDAO memberDAO = new MemberDAO();
                 MemberEntity member = memberDAO.findMemberById(connection, freeBoardEntity.getWriterId());
                 if (member == null) {
                     throw new Exception("존재하지 않는 회원 아이디입니다.");
@@ -36,13 +49,25 @@ public class FreeBoardBiz {
     }
 
     public void save(String content, String writerId) throws Exception {
-        FreeBoardDAO freeBoardDAO = new FreeBoardDAO();
         Connection connection = null;
         try {
             connection = JdbcUtil.getConnection();
             boolean result = freeBoardDAO.insertFreeBoard(connection, content, writerId);
             if (result) {
-                JdbcUtil.commit(connection);
+
+                int point = pointPolicy.getPoint(content);
+                MemberEntity member = memberDAO.findMemberById(connection, writerId);
+                if (member == null) {
+                    throw new Exception("존재하지 않는 회원입니다: " + writerId);
+                }
+                member.addPoint(point);
+                boolean updateResult = memberDAO.updateMember(connection, member);
+                if (updateResult) {
+                    JdbcUtil.commit(connection);
+                } else {
+                    throw new Exception("포인트 수정에 실패했습니다.");
+                }
+
             } else {
                 throw new Exception("게시글 작성을 실패했습니다.");
             }
@@ -55,7 +80,6 @@ public class FreeBoardBiz {
     }
 
     public FreeBoardDTO findFreeBoardById(Long id) throws Exception {
-        FreeBoardDAO freeBoardDAO = new FreeBoardDAO();
         Connection connection = null;
         try {
             connection = JdbcUtil.getConnection();
@@ -63,7 +87,6 @@ public class FreeBoardBiz {
             if (freeBoardEntity == null) {
                 throw new Exception("존재하지 않는 게시글입니다.");
             }
-            MemberDAO memberDAO = new MemberDAO();
             MemberEntity member = memberDAO.findMemberById(connection, freeBoardEntity.getWriterId());
             if (member == null) {
                 throw new Exception("존재하지 않는 회원 아이디입니다.");
@@ -75,7 +98,6 @@ public class FreeBoardBiz {
     }
 
     public void update(Long id, String content) throws Exception {
-        FreeBoardDAO freeBoardDAO = new FreeBoardDAO();
         Connection connection = null;
         try {
             connection = JdbcUtil.getConnection();
@@ -94,7 +116,6 @@ public class FreeBoardBiz {
     }
 
     public void delete(Long id) throws Exception {
-        FreeBoardDAO freeBoardDAO = new FreeBoardDAO();
         Connection connection = null;
         try {
             connection = JdbcUtil.getConnection();

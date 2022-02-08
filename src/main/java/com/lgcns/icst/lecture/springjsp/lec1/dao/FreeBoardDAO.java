@@ -2,6 +2,7 @@ package com.lgcns.icst.lecture.springjsp.lec1.dao;
 
 import com.lgcns.icst.lecture.springjsp.lec1.entity.FreeBoardEntity;
 import com.lgcns.icst.lecture.springjsp.lec1.util.JdbcUtil;
+import org.springframework.stereotype.Repository;
 
 import java.sql.Connection;
 import java.sql.Date;
@@ -11,6 +12,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
+@Repository
 public class FreeBoardDAO {
 
     public List<FreeBoardEntity> findAllFreeBoards(Connection connection) throws SQLException {

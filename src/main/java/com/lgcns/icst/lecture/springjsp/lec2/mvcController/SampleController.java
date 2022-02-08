@@ -1,4 +1,4 @@
-package com.lgcns.icst.lecture.springjsp.mvcController;
+package com.lgcns.icst.lecture.springjsp.lec2.mvcController;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;

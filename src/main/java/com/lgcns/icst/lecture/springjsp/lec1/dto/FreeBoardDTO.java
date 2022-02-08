@@ -12,6 +12,9 @@ public class FreeBoardDTO {
     private String writerName;
     private Date writeDate;
 
+    public FreeBoardDTO() {
+    }
+
     public FreeBoardDTO(FreeBoardEntity freeBoardEntity, String writerName) {
         this.id = freeBoardEntity.getId();
         this.content = freeBoardEntity.getContent();
@@ -38,5 +41,36 @@ public class FreeBoardDTO {
 
     public Date getWriteDate() {
         return writeDate;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public void setContent(String content) {
+        this.content = content;
+    }
+
+    public void setWriterId(String writerId) {
+        this.writerId = writerId;
+    }
+
+    public void setWriterName(String writerName) {
+        this.writerName = writerName;
+    }
+
+    public void setWriteDate(Date writeDate) {
+        this.writeDate = writeDate;
+    }
+
+    @Override
+    public String toString() {
+        return "FreeBoardDTO{" +
+                "id=" + id +
+                ", content='" + content + '\'' +
+                ", writerId='" + writerId + '\'' +
+                ", writerName='" + writerName + '\'' +
+                ", writeDate=" + writeDate +
+                '}';
     }
 }

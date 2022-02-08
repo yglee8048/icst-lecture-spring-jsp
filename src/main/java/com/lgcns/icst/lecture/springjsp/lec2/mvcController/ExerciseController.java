@@ -1,4 +1,4 @@
-package com.lgcns.icst.lecture.springjsp.mvcController;
+package com.lgcns.icst.lecture.springjsp.lec2.mvcController;
 
 import com.lgcns.icst.lecture.springjsp.lec1.dto.FreeBoardDTO;
 import org.springframework.stereotype.Controller;
@@ -25,6 +25,8 @@ public class ExerciseController {
         System.out.println("writerId = " + freeBoardDTO.getWriterId());
         System.out.println("writerName = " + freeBoardDTO.getWriterName());
         System.out.println("freeBoardDTO = " + freeBoardDTO);
+
+        freeBoardDTO.setId(20L);
 
         return "lec2/sample";
     }

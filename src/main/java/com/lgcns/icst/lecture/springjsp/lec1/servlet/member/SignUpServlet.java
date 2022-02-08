@@ -1,6 +1,8 @@
 package com.lgcns.icst.lecture.springjsp.lec1.servlet.member;
 
 import com.lgcns.icst.lecture.springjsp.lec1.biz.MemberBiz;
+import com.lgcns.icst.lecture.springjsp.lec1.dto.MemberDTO;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
@@ -12,6 +14,13 @@ import java.io.IOException;
 
 @WebServlet(name = "signUpServlet-lec1", urlPatterns = "/lec1/member/sign-up")
 public class SignUpServlet extends HttpServlet {
+
+    private MemberBiz memberBiz;
+
+    @Autowired
+    public SignUpServlet(MemberBiz memberBiz) {
+        this.memberBiz = memberBiz;
+    }
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
@@ -25,9 +34,13 @@ public class SignUpServlet extends HttpServlet {
         String memberPw = req.getParameter("memberPw");
         String memberName = req.getParameter("memberName");
 
-        MemberBiz memberBiz = new MemberBiz();
         try {
-            memberBiz.signUp(memberId, memberPw, memberName);
+            MemberDTO memberDTO = new MemberDTO();
+            memberDTO.setMemberId(memberId);
+            memberDTO.setMemberPw(memberPw);
+            memberDTO.setMemberName(memberName);
+
+            memberBiz.signUp(memberDTO);
             resp.sendRedirect(req.getContextPath() + "/lec1/member/login");
 
         } catch (Exception e) {

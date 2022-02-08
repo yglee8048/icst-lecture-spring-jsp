@@ -2,12 +2,14 @@ package com.lgcns.icst.lecture.springjsp.lec1.dao;
 
 import com.lgcns.icst.lecture.springjsp.lec1.entity.MemberEntity;
 import com.lgcns.icst.lecture.springjsp.lec1.util.JdbcUtil;
+import org.springframework.stereotype.Repository;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
+@Repository
 public class MemberDAO {
 
     public MemberEntity findMemberById(Connection connection, String memberId) throws SQLException {
@@ -45,6 +47,51 @@ public class MemberDAO {
             int result = preparedStatement.executeUpdate();
             return result == 1;
         } finally {
+            JdbcUtil.close(preparedStatement);
+        }
+    }
+
+    public boolean updateMember(Connection connection, MemberEntity memberEntity) throws Exception {
+        PreparedStatement preparedStatement = null;
+        try {
+            String sql = "UPDATE MEMBER SET MEMBER_PW = ?, MEMBER_NAME = ?, POINT = ? WHERE MEMBER_ID = ?";
+            preparedStatement = connection.prepareStatement(sql);
+            preparedStatement.setString(1, memberEntity.getMemberPw());
+            preparedStatement.setString(2, memberEntity.getMemberName());
+            preparedStatement.setInt(3, memberEntity.getPoint());
+            preparedStatement.setString(4, memberEntity.getMemberId());
+
+            int result = preparedStatement.executeUpdate();
+            return result == 1;
+        } finally {
+            JdbcUtil.close(preparedStatement);
+        }
+    }
+
+    public Double getPercentRankByMemberId(Connection connection, String memberId) throws Exception {
+        PreparedStatement preparedStatement = null;
+        ResultSet resultSet = null;
+        try {
+            String sql = "select m.MEMBER_ID, rank.pr " +
+                    "from MEMBER m " +
+                    "left join ( " +
+                    "    select MEMBER_ID, " +
+                    "           POINT, " +
+                    "           percent_rank() over (order by POINT) as pr " +
+                    "    from MEMBER " +
+                    ") rank " +
+                    "on m.MEMBER_ID = rank.MEMBER_ID " +
+                    "where m.MEMBER_ID = ? ";
+            preparedStatement = connection.prepareStatement(sql);
+            preparedStatement.setString(1, memberId);
+
+            resultSet = preparedStatement.executeQuery();
+            if (resultSet.next()) {
+                return resultSet.getDouble("pr");
+            }
+            return null;
+        } finally {
+            JdbcUtil.close(resultSet);
             JdbcUtil.close(preparedStatement);
         }
     }
