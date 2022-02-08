@@ -1,4 +1,4 @@
-package com.lgcns.icst.lecture.springjsp.mvcController;
+package com.lgcns.icst.lecture.springjsp.lec2.mvcController;
 
 import com.lgcns.icst.lecture.springjsp.lec1.dto.FreeBoardDTO;
 import org.springframework.stereotype.Controller;
